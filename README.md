@@ -15,7 +15,7 @@ bug-bounty/
 |---|---|
 | `new-program.sh <name>` | Creates `programs/<name>/` with folders, scope files and templates. Sends nothing to the target. |
 | `import-scope.sh <name> [handle]` | Fills `scope/` from HackerOne public data. Path-scoped entries are commented out for manual handling. |
-| `recon.sh <name> [--passive]` | Subdomains (subfinder) → scope filter → DNS (dnsx) → HTTP probing (httpx). One dated folder per run, `recon/latest` → newest, `summary.md` with what's new since the last run. `--passive` sends nothing to the target. |
+| `recon.sh <name> [--passive] [--resume]` | Subdomains (subfinder) → scope filter → DNS (dnsx) + wildcard DNS filtering → HTTP probing (httpx, with progress). One dated folder per run, `recon/latest` → newest finished run, `summary.md` with what's new since the last run. `--passive` sends nothing to the target. `--resume` continues a run stopped with Ctrl+C or an error. |
 
 ## Workflow
 
