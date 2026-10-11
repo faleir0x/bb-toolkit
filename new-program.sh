@@ -8,7 +8,7 @@
 # Next step after running it: fill scope/ and program.conf from the program page.
 
 set -euo pipefail
-source "$(dirname "$0")/lib/common.sh"
+source "$(dirname "$(readlink -f "$0")")/lib/common.sh"
 
 usage() {
     cat >&2 <<EOF
@@ -185,10 +185,10 @@ ok "Workspace created"
 cat >&2 <<EOF
 
 Next steps:
-  1. Read the program's policy page.
-  2. Fill in $dir/scope/in-scope.txt and out-of-scope.txt
-  3. Fill in $dir/program.conf (rate limit, headers, scanning rules)
-  4. Write a first overview in $dir/notes.md
+  1. Fill the scope: import-scope.sh $slug   (HackerOne programs)
+     or edit $dir/scope/ by hand
+  2. Read the policy, compare it with scope/, fill in program.conf
+  3. Run recon: recon.sh $slug
 EOF
 
 # Print the path on stdout so it can be used like:  cd "$(./new-program.sh foo)"

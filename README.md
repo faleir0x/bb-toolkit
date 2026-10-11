@@ -14,12 +14,16 @@ bug-bounty/
 | Script | What it does |
 |---|---|
 | `new-program.sh <name>` | Creates `programs/<name>/` with folders, scope files and templates. Sends nothing to the target. |
+| `import-scope.sh <name> [handle]` | Fills `scope/` from HackerOne public data. Path-scoped entries are commented out for manual handling. |
+| `recon.sh <name> [--passive]` | Subdomains (subfinder) → scope filter → DNS (dnsx) → HTTP probing (httpx). One dated folder per run, `recon/latest` → newest, `summary.md` with what's new since the last run. `--passive` sends nothing to the target. |
 
 ## Workflow
 
-1. `./new-program.sh "Example Corp"`
-2. Read the program policy. Fill `scope/in-scope.txt`, `scope/out-of-scope.txt` and `program.conf`.
-3. Run recon (coming next).
+```
+new-program.sh vimeo
+import-scope.sh vimeo      # then compare scope/ with the policy, edit program.conf
+recon.sh vimeo             # results: programs/vimeo/recon/latest/summary.md
+```
 
 ## Scope syntax
 
