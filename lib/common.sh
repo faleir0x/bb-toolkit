@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 # Shared helpers for all bug bounty scripts.
-# Usage (from a script in scripts/):  source "$(dirname "$0")/lib/common.sh"
+# Usage (from a script in the repo root):  source "$(dirname "$0")/lib/common.sh"
 
 # ---------------------------------------------------------------------------
 # Paths
 # ---------------------------------------------------------------------------
 # Layout:  BB_HOME/
-#            ├── scripts/     (this repo)
+#            ├── bb-toolkit/  (this repo)
 #            ├── programs/    (one workspace per program)
 #            └── wordlists/   (SecLists, etc.)
 # Any of these can be overridden with an environment variable.

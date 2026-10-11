@@ -1,10 +1,10 @@
-# Bug bounty scripts
+# bb-toolkit
 
 Automation for setting up programs and running recon.
 
 ```
 bug-bounty/
-├── scripts/     this repo
+├── bb-toolkit/  this repo
 ├── programs/    one workspace per program (not in git)
 └── wordlists/   SecLists and other wordlists (not in git)
 ```
