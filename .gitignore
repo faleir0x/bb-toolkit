@@ -2,3 +2,4 @@
 # Never commit target data, tokens or findings here.
 *.log
 .directory
+resume.cfg

@@ -254,7 +254,10 @@ if ((!passive)) && [[ -s "$run/dns/resolved.txt" ]]; then
             [[ -n "${CUSTOM_HEADER:-}" ]] && hx+=(-H "$CUSTOM_HEADER")
             [[ -n "${USER_AGENT:-}" ]] && hx+=(-H "User-Agent: $USER_AGENT")
             [[ -t 1 ]] && hx+=(-stats -si 30)   # progress line every 30s
-            "${hx[@]}" < /dev/null > /dev/null
+            # Run inside http/: when interrupted, httpx drops a resume.cfg in
+            # the current folder. We resume our own way, so it's just litter.
+            (cd "$run/http" && "${hx[@]}" < /dev/null > /dev/null)
+            rm -f "$run/http/resume.cfg"
             cat "$run/http/httpx.part.json" >> "$run/http/httpx.json"
             rm "$run/http/httpx.part.json"
         else
