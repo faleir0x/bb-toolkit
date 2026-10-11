@@ -1,0 +1,4 @@
+# Program data and wordlists live outside this repo (../programs, ../wordlists).
+# Never commit target data, tokens or findings here.
+*.log
+.directory
