@@ -213,6 +213,10 @@ if ((!passive)) && [[ -s "$run/subdomains/all.txt" ]]; then
 
         jq -r 'select(.cname) | "\(.host)\t\(.cname | join(", "))"' "$run/dns/dnsx.json" | sort -u \
             | join -t$'\t' "$run/dns/resolved.txt" - | sed 's/\t/ -> /' > "$run/dns/cnames.txt" || true
+        # Human-readable list of real hosts: host  [IPs]  [CNAME]
+        jq -r '"\(.host)\t[\((.a // []) | join(", "))]\t[\((.cname // []) | join(", "))]"' \
+            "$run/dns/dnsx.json" | sort -u | join -t$'\t' "$run/dns/resolved.txt" - \
+            > "$run/dns/dns-details.txt" || true
         mark_done dns
     fi
     while read -r root; do
