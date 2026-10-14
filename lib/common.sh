@@ -81,6 +81,7 @@ program_dir() {
 #   *.example.com   -> any subdomain of example.com (NOT example.com itself)
 #   example.com     -> exactly example.com
 #   https://app.example.com/path  -> treated as app.example.com
+#   *dev*.example.com -> any host matching the pattern ("*" = any characters)
 #
 # Out-of-scope rules always win over in-scope rules.
 # Input lines may be bare hosts or URLs; output is deduplicated bare hosts.
@@ -102,7 +103,16 @@ scope_filter() {
             sub(/\.$/, "", s)                        # trailing dot (DNS)
             return s
         }
+        # Other patterns ("*dev*.example.com"): "*" matches any characters.
+        function glob_match(host, rule,    re) {
+            re = rule
+            gsub(/\./, "\\.", re)
+            gsub(/\*/, "[a-z0-9.-]*", re)
+            return host ~ ("^" re "$")
+        }
         function matches(host, rule,    base) {
+            if (index(rule, "*") && !(substr(rule, 1, 2) == "*." && !index(substr(rule, 3), "*")))
+                return glob_match(host, rule)
             if (substr(rule, 1, 2) == "*.") {
                 base = substr(rule, 2)               # ".example.com"
                 return length(host) > length(base) &&

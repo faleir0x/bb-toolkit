@@ -95,6 +95,9 @@ convert() {  # convert in_scope|out_of_scope  -> scope lines on stdout
         e="${e#*://}"; e="${e%/\*}"; e="${e%/}"
         if [[ "$e" == */* ]]; then
             echo "# PATH-SCOPED (only this path, test by hand): $raw"; ((skipped++)) || true
+        elif [[ "${e#\*.}" == *\** && "$1" == out_of_scope ]]; then
+            # Excluding more is the safe side: keep patterns like *dev*.x.com active.
+            echo "$e  # pattern: \"*\" = any characters"
         elif [[ "${e#\*.}" == *\** ]]; then
             echo "# CHECK MANUALLY (unusual wildcard): $raw"; ((skipped++)) || true
         elif [[ "$1" == in_scope && "$b" == 0 ]]; then
