@@ -111,7 +111,10 @@ esac
 # Convert
 # ---------------------------------------------------------------------------
 # web_assets prints "<bounty 1/0>\t<entry>\t<note>" for web assets, one per
-# entry (some entries hold several hosts separated by commas). The note is
+# entry. For out-of-scope it takes EVERY asset type ("other" is sometimes a
+# wildcard like *.openfinance.x.com): excluding more is the safe side, and
+# anything that isn't a host still ends up as a comment.
+# Some entries hold several hosts separated by commas. The note is
 # the program's own text on that asset. It often holds exceptions ("EXCEPT
 # community.vhx.tv", "report on the X program"), so it's copied as a comment
 # above the rule: read those before testing.
@@ -121,24 +124,25 @@ JQ_SPLIT='split(",")[] | gsub("^\\s+|\\s+$"; "") | select(length > 0)'
 web_assets() {  # web_assets in_scope|out_of_scope
     case "$platform" in
         hackerone) jq -r --arg k "$1" ".targets[\$k][]
-            | select(.asset_type == \"URL\" or .asset_type == \"WILDCARD\")
+            | select(\$k == \"out_of_scope\" or .asset_type == \"URL\" or .asset_type == \"WILDCARD\")
             | (if .eligible_for_bounty then 1 else 0 end) as \$b
             | ((.instruction // \"\") | $JQ_NOTE) as \$note
             | .asset_identifier | $JQ_SPLIT | \"\(\$b)\t\(.)\t\(\$note)\"" <<< "$program" ;;
         # Bugcrowd has no per-asset bounty flag. Its "name" can differ from the
         # target (target www.pexels.com, name *.pexels.com): kept as a note.
         bugcrowd) jq -r --arg k "$1" ".targets[\$k][]
-            | select(.type == \"website\" or .type == \"api\")
+            | select(\$k == \"out_of_scope\" or .type == \"website\" or .type == \"api\")
             | ((if (.name // \"\") != \"\" and .name != .target then \"Listed as: \" + .name else \"\" end) | $JQ_NOTE) as \$note
             | .target | $JQ_SPLIT | \"1\t\(.)\t\(\$note)\"" <<< "$program" ;;
         intigriti) jq -r --arg k "$1" ".targets[\$k][]
-            | select(.type == \"url\" or .type == \"wildcard\")
+            | select(\$k == \"out_of_scope\" or .type == \"url\" or .type == \"wildcard\")
             | (if .impact == \"No Bounty\" then 0 else 1 end) as \$b
             | (([.impact // empty | select(. != \"Out of scope\")] + [.description // empty] | join(\" - \")) | $JQ_NOTE) as \$note
             | .endpoint | $JQ_SPLIT | \"\(\$b)\t\(.)\t\(\$note)\"" <<< "$program" ;;
     esac
 }
 other_assets() {  # mobile apps, source code, etc. - listed for reference only
+    [[ "$1" == in_scope ]] || return 0   # out-of-scope: every type is already a rule
     case "$platform" in
         hackerone) jq -r --arg k "$1" '.targets[$k][]
             | select(.asset_type != "URL" and .asset_type != "WILDCARD")
